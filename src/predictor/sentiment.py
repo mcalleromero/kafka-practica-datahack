@@ -10,10 +10,9 @@ class Predictor:
 
     def predict(self, tweet):
         # Let's run the sentiment analysis on each tweet
-        content = tweet.full_text
-        sentiment = self.sentiment_analysis(content)
+        sentiment = self.sentiment_analysis(tweet)
         return {
-            "tweet": content,
+            "tweet": tweet,
             "label": sentiment[0]["label"],
             "pred_proba": sentiment[0]["score"],
         }

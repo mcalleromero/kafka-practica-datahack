@@ -1,0 +1,8 @@
+general:
+  log_level: DEBUG
+bootstrap:
+  host: broker
+  port: 29092
+topics:
+  input_topic: stream-tweets
+  output_topic: stream-sentiment

@@ -4,12 +4,12 @@
         "tasks.max": "1",
         "connector.class": "com.github.jcustenborder.kafka.connect.spooldir.SpoolDirCsvSourceConnector",
         "input.path": "/data/input",
-        "input.file.pattern": "tweets_*.csv",
+        "input.file.pattern": "^tweets_*.csv",
         "error.path": "/data/error",
         "finished.path": "/data/processed",
         "halt.on.error": "false",
         "topic": "stream-tweets",
         "csv.first.row.as.header": "false",
-        "schema.generation.enabled": "false"
+        "schema.generation.enabled": "true"
     }
 }

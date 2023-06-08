@@ -5,6 +5,6 @@ ENV CONNECT_PLUGIN_PATH /usr/share/java,/usr/share/confluent-hub-components
 
 RUN confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:2.0.65
 COPY input-spooldir.json .
-# RUN curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+COPY install-connector.sh .
 
-CMD /etc/confluent/docker/run
+CMD bash -c install-connector.sh
