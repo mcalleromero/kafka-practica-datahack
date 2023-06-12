@@ -25,17 +25,12 @@ class Tweet:
         self.sentiment = {}
 
         try:
-            message = ast.literal_eval(message)
-        except (ValueError, SyntaxError):
-            raise TweetError("Tweet is not correctly formatted")
-
-        try:
             self.user = message["user"]
         except KeyError:
             self.user = "undefined"
 
         try:
-            self.content = message["content"]
+            self.content = message["tweet"]
         except KeyError:
             raise TweetError("Tweet content not found")
 
@@ -92,6 +87,11 @@ if __name__ == "__main__":
     # }
     for msg in consumer:
         message = msg.value.decode("utf8")
+        try:
+            message = ast.literal_eval(message)
+            message = message["payload"]
+        except (ValueError, SyntaxError):
+            raise TweetError("Tweet is schemaless or is not JSON formatted")
 
         logger.debug(
             "%s:%d:%d: value=%s"
@@ -105,16 +105,14 @@ if __name__ == "__main__":
 
         try:
             tweet = Tweet(message=message)
-        except TweetError:
-            logger.debug("Error with tweet: %s" % (message))
+        except TweetError as e:
+            logger.debug("Error with tweet: %s:%s" % (message, e))
             continue
 
-        result = predictor.predict(tweet.content)
+        _, result = predictor.predict(tweet.content)
 
-        logger.debug(
-            "Tweet: %s\nSentiment analysis result: %s" % (tweet.content, result)
-        )
         tweet.sentiment = result
         producer.send(config.output_topic, tweet.to_dict())
+        logger.debug("Sent tweet: %s" % (tweet.to_dict()))
 
         consumer.commit()
