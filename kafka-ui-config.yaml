@@ -5,6 +5,6 @@ kafka:
       kafkaConnect: 
         clusters:
           - name: connect
-            address: http://localhost:8083
+            address: http://kafka-connect:8083
       KSQLDBServer: http://ksqldb-server:8088
       schemaRegistry: http://schema-registry:8081

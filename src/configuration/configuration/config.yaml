@@ -4,6 +4,9 @@ general:
 bootstrap:
   host: broker
   port: 29092
+schema_registry:
+  host: schema-registry
+  port: 8081
 topics:
   input_topic: stream-tweets
   output_topic: stream-sentiment

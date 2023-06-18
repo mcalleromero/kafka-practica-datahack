@@ -8,9 +8,6 @@ services:
     networks: 
       - kafka_network
     env_file: server.env
-    # environment:
-    #   ZOOKEEPER_CLIENT_PORT: 2181
-    #   ZOOKEEPER_TICK_TIME: 2000
 
   broker:
     image: confluentinc/cp-kafka:7.3.0
@@ -53,15 +50,11 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-6.2.0.jar
-      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.2.2
+    image: confluentinc/cp-schema-registry:7.3.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -70,10 +63,7 @@ services:
       - "8081:8081"
     networks:
       - kafka_network
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    env_file: server.env
 
   predictor:
     image: predictor:${VERSION}
@@ -87,6 +77,36 @@ services:
       replicas: 3
     networks: 
       - kafka_network
+
+  twitter-api:
+    image: twitter-api:${VERSION}
+    build:
+      context: ./src
+      dockerfile: ./tw-api/Dockerfile
+    hostname: twitter-api
+    container_name: twitter-api
+    networks: 
+      - kafka_network
+    volumes:
+      - ${PWD}/data/api:/data
+    ports:
+      - "8099:8099"
+    environment:
+      TWEETS_FILE_PATH: /data/tweets_processed.csv
+
+  twitter-api-processer:
+    image: twitter-api-processer:${VERSION}
+    build:
+      context: ./src
+      dockerfile: ./tw-api-processer/Dockerfile
+    networks: 
+      - kafka_network
+    deploy:
+      mode: replicated
+      replicas: 3
+    environment:
+      INPUT_TOPIC: stream-tweets-processer
+      OUTPUT_TOPIC: stream-tweets
 
   ksqldb-server:
     # *-----------------------------*
