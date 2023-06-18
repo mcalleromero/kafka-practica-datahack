@@ -1,19 +1,19 @@
-import ast
 import json
 import logging
 import time
+from datetime import datetime
 
 import kafka.errors
+import pytz
 from kafka import KafkaConsumer, KafkaProducer
 
 from configuration import Configuration
 
+from .sentiment import Predictor
+
 FORMAT = "%(asctime)s  %(message)s"
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger("configuration")
-
-
-from .sentiment import Predictor
 
 
 class TweetError(Exception):
@@ -35,16 +35,25 @@ class Tweet:
             raise TweetError("Tweet content not found")
 
         try:
-            # TODO: Format date
-            self.date = message["date"]
+            date = message["date"]
+            self.date = self._format_date(date)
         except KeyError:
             raise TweetError("Tweet date creation not found")
+
+    def _format_date(self, date: str) -> datetime:
+        formatted_date = (
+            datetime.strptime(date, "%a %b %d %H:%M:%S PDT %Y")
+            .replace(tzinfo=pytz.timezone(config.default_timezone))
+            .astimezone(pytz.utc)
+        )
+
+        return formatted_date
 
     def to_dict(self):
         return {
             "user": self.user,
             "content": self.content,
-            "date": self.date,
+            "date": self.date.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "sentiment": self.sentiment,
         }
 
@@ -79,17 +88,12 @@ if __name__ == "__main__":
     consumer, producer = connect_to_kafka(retries=3)
     predictor = Predictor()
 
-    # Tweets must be formatted
-    # value: {
-    #     "date": <date>,
-    #     "user": <user>,
-    #     "content": <content>
-    # }
     for msg in consumer:
         message = msg.value.decode("utf8")
+
         try:
-            message = ast.literal_eval(message)
-            message = message["payload"]
+            message = json.loads(message)
+            payload = message["payload"]
         except (ValueError, SyntaxError):
             raise TweetError("Tweet is schemaless or is not JSON formatted")
 
@@ -99,14 +103,14 @@ if __name__ == "__main__":
                 msg.topic,
                 msg.partition,
                 msg.offset,
-                message,
+                payload,
             )
         )
 
         try:
-            tweet = Tweet(message=message)
+            tweet = Tweet(message=payload)
         except TweetError as e:
-            logger.debug("Error with tweet: %s:%s" % (message, e))
+            logger.debug("Error with tweet: %s:%s" % (payload, e))
             continue
 
         _, result = predictor.predict(tweet.content)

@@ -49,3 +49,7 @@ class Configuration:
     @property
     def log_level(self):
         return self.get_config_param("general", "log_level", str)
+
+    @property
+    def default_timezone(self):
+        return self.get_config_param("general", "default_timezone", str)

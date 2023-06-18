@@ -1,5 +1,6 @@
 general:
   log_level: DEBUG
+  default_timezone: America/Los_Angeles
 bootstrap:
   host: broker
   port: 29092

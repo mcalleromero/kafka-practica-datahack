@@ -10,6 +10,8 @@
         "halt.on.error": "false",
         "topic": "stream-tweets",
         "csv.first.row.as.header": "true",
-        "schema.generation.enabled": "true"
+        "schema.generation.enabled": "false",
+        "key.schema": " {\n    \"name\":\"stream-tweets-key-schema\",\n    \"type\":\"STRUCT\",\n    \"isOptional\":false,\n    \"fieldSchemas\":{\n       \"id\":{\n          \"type\":\"INT64\",\n          \"isOptional\":false\n       }\n    }\n }",
+        "value.schema": "{\n   \"name\":\"stream-tweets-schema\",\n   \"type\":\"STRUCT\",\n   \"isOptional\":false,\n   \"fieldSchemas\":{\n      \"id\":{\n         \"type\":\"INT64\",\n         \"isOptional\":false\n      },\n      \"user\":{\n         \"type\":\"STRING\",\n         \"isOptional\":true\n      },\n      \"date\":{\n         \"type\":\"STRING\",\n         \"isOptional\":true\n      },\n      \"tweet\":{\n         \"type\":\"STRING\",\n         \"isOptional\":true\n      }\n   }\n}"
     }
 }
