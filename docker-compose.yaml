@@ -74,7 +74,9 @@ services:
       dockerfile: ./predictor/Dockerfile
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
+    stdin_open: true
+    tty: true
     networks: 
       - kafka_network
     environment:

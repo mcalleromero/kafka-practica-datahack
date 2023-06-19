@@ -44,11 +44,14 @@ class Tweet:
             raise TweetError("Tweet date creation not found")
 
     def _format_date(self, date: str) -> datetime:
-        formatted_date = (
-            datetime.strptime(date, "%a %b %d %H:%M:%S PDT %Y")
-            .replace(tzinfo=pytz.timezone(config.default_timezone))
-            .astimezone(pytz.utc)
-        )
+        try:
+            formatted_date = (
+                datetime.strptime(date, "%a %b %d %H:%M:%S PDT %Y")
+                .replace(tzinfo=pytz.timezone(config.default_timezone))
+                .astimezone(pytz.utc)
+            )
+        except pytz.exceptions.UnknownTimeZoneError:
+            TweetError(f"Incorrect timezone: {config.default_timezone}")
 
         return formatted_date
 
