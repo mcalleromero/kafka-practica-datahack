@@ -12,8 +12,8 @@ while : ; do
   sleep 5 
 done
 
-# echo -e "\n--\n+> Creating CSV Spool Dir source"
-# curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+echo -e "\n--\n+> Creating CSV Spool Dir source"
+curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 
 echo -e "\n--\n+> Creating REST source"
 curl -d @"input-rest.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors

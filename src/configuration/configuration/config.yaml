@@ -1,5 +1,5 @@
 general:
-  log_level: DEBUG
+  log_level: INFO
   default_timezone: America/Los_Angeles
 bootstrap:
   host: broker
@@ -7,6 +7,3 @@ bootstrap:
 schema_registry:
   host: schema-registry
   port: 8081
-topics:
-  input_topic: stream-tweets
-  output_topic: stream-sentiment

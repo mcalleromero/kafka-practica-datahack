@@ -1,0 +1,5 @@
+general:
+  log_level: DEBUG
+topics:
+  input_topic: stream-tweets
+  output_topic: stream-sentiment

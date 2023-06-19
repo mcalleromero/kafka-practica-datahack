@@ -11,8 +11,7 @@ from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import MessageField, SerializationContext
 from kafka import KafkaConsumer, KafkaProducer
 
-from configuration import Configuration
-
+from .predictor_configuration import PredictorConfiguration
 from .sentiment import Predictor
 
 FORMAT = "%(asctime)s  %(message)s"
@@ -105,7 +104,7 @@ def connect_to_schema_registry(retries=3):
 
 
 if __name__ == "__main__":
-    config = Configuration(config_path="./configuration/config.yaml")
+    config = PredictorConfiguration()
     logger.setLevel(config.log_level)
     consumer, producer = connect_to_kafka(retries=3)
     predictor = Predictor()

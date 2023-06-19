@@ -5,15 +5,8 @@ WORKDIR /opt
 COPY kafka-connect-rest/ .
 
 RUN mvn clean install
-    # cd examples/spring/gs-rest-service && \
-    # mvn clean install
-    # cd .. && \
-    # cp ../../kafka-connect-rest-plugin/target/kafka-connect-rest-plugin-*-shaded.jar jars/ && \
-    # cp ../../kafka-connect-transform-from-json/kafka-connect-transform-from-json-plugin/target/kafka-connect-transform-from-json-plugin-*-shaded.jar jars/ && \
-    # cp ../../kafka-connect-transform-add-headers/target/kafka-connect-transform-add-headers-*-shaded.jar jars/ && \
-    # cp ../../kafka-connect-transform-velocity-eval/target/kafka-connect-transform-velocity-eval-*-shaded.jar jars/
 
-FROM confluentinc/cp-kafka-connect:7.1.0-1-ubi8
+FROM confluentinc/cp-kafka-connect:7.3.0
 
 COPY --from=mvn_build /opt/kafka-connect-rest-plugin/target/kafka-connect-rest-plugin-*-shaded.jar /jars/
 COPY --from=mvn_build /opt/kafka-connect-transform-from-json/kafka-connect-transform-from-json-plugin/target/kafka-connect-transform-from-json-plugin-*-shaded.jar /jars/

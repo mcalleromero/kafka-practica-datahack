@@ -1,0 +1,34 @@
+general:
+  log_level: DEBUG
+topics:
+  input_topic: stream-tweets-api
+  output_topic: stream-tweets
+schemas:
+  output_schema: |-
+    {
+      "name":"stream.tweets.value.schema",
+      "type":"record",
+      "isOptional": false,
+      "fields": [
+        {
+          "name": "id",
+          "type":"int",
+          "isOptional": false
+        },
+        {
+          "name": "user",
+          "type":"string",
+          "isOptional": false
+        },
+        {
+          "name": "date",
+          "type":"string",
+          "isOptional": false
+        },
+        {
+          "name": "tweet",
+          "type":"string",
+          "isOptional": false
+        }
+      ]
+    }
