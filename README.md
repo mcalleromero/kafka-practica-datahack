@@ -21,4 +21,7 @@ Changed pom.xml from [REST connect plugin](https://github.com/llofberg/kafka-con
 
 - Especificar que he utilizado y arreglado el plugin del REST connector (cambiando el pom.xml)
 - Especificar necesario fichero de tweets para el conector API
+- Ejemplo uso ksqldb
+- ejemplo uso pantalla kafka ui
+- ejemplo uso kibana y elastic
 - Detallar la arquitectura

@@ -16,8 +16,10 @@ COPY --from=mvn_build /opt/kafka-connect-transform-velocity-eval/target/kafka-co
 ENV CONNECT_PLUGIN_PATH /usr/share/java,/usr/share/confluent-hub-components,/jars
 
 RUN confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:2.0.65
+RUN confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:14.0.6
 COPY input-spooldir.json .
 COPY input-rest.json .
+COPY output-elasticsearch.json .
 COPY install.sh .
 
 CMD ["/bin/sh", "install.sh"]

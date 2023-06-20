@@ -12,6 +12,11 @@ while : ; do
   sleep 5 
 done
 
+if $ELASTICSEARCH_ENABLE ; then
+  echo -e "\n--\n+> Creating ElasticSearch sink"
+  curl -d @"output-elasticsearch.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+fi
+
 if $CONNECT_FILES_ENABLE ; then
   echo -e "\n--\n+> Creating CSV Spool Dir source"
   curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors

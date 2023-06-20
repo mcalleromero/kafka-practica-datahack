@@ -128,11 +128,12 @@ if __name__ == "__main__":
         message = deserializer(msg.value, context)
 
         logger.debug(
-            "%s:%d:%d: value=%s"
+            "%s:%d:%d: key=%s value=%s"
             % (
                 msg.topic,
                 msg.partition,
                 msg.offset,
+                msg.key,
                 message,
             )
         )
@@ -146,7 +147,7 @@ if __name__ == "__main__":
         _, result = predictor.predict(tweet.content)
 
         tweet.sentiment = result
-        producer.send(config.output_topic, tweet.to_dict())
+        producer.send(config.output_topic, key=msg.key, value=tweet.to_dict())
         logger.debug("Sent tweet: %s" % (tweet.to_dict()))
 
         consumer.commit()

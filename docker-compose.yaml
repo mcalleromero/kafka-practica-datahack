@@ -43,6 +43,7 @@ services:
     environment:
       CONNECT_FILES_ENABLE: ${CONNECT_FILES_ENABLE}
       TWITTER_API_ENABLE: ${TWITTER_API_ENABLE}
+      ELASTICSEARCH_ENABLE: ${ELASTICSEARCH_ENABLE}
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
@@ -90,7 +91,7 @@ services:
   twitter-api-processer:
     image: twitter-api-processer:${VERSION}
     hostname: twitter-api-processer
-    container_name: twitter-api-processer
+    # container_name: twitter-api-processer
     build:
       context: ./src
       dockerfile: ./tw-api-processer/Dockerfile
@@ -124,6 +125,33 @@ services:
     entrypoint: /bin/sh
     tty: true
 
+  elasticsearch:
+    image: elasticsearch:7.17.10
+    hostname: elasticsearch
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks: 
+      - kafka_network
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  kibana:
+    image: kibana:7.17.10
+    hostname: kibana
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks: 
+      - kafka_network
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
@@ -138,3 +166,6 @@ services:
 
 networks:
   kafka_network:
+
+volumes:
+  elastic-data:
