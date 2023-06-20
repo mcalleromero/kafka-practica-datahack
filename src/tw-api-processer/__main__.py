@@ -2,7 +2,6 @@ import ast
 import json
 import logging
 import time
-from datetime import datetime
 
 import kafka.errors
 import requests

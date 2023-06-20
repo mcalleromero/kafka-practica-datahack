@@ -20,6 +20,8 @@ services:
     networks: 
       - kafka_network
     env_file: server.env
+    environment:
+      KAFKA_NUM_PARTITIONS: ${DEFAULT_NUMBER_OF_PARTITIONS}
 
   kafka-connect:
     image: stream-connector:${VERSION}
@@ -37,21 +39,10 @@ services:
       - kafka_network
     ports:
       - "8083:8083"
+    env_file: server.env
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
-      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
-      CONNECT_REST_PORT: 8083
-      CONNECT_GROUP_ID: compose-connect-group
-      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
-      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_FILES_ENABLE: ${CONNECT_FILES_ENABLE}
+      TWITTER_API_ENABLE: ${TWITTER_API_ENABLE}
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
@@ -74,9 +65,7 @@ services:
       dockerfile: ./predictor/Dockerfile
     deploy:
       mode: replicated
-      replicas: 1
-    stdin_open: true
-    tty: true
+      replicas: ${PREDICTOR_N_REPLICAS}
     networks: 
       - kafka_network
     environment:
@@ -109,11 +98,9 @@ services:
       - kafka_network
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: ${PROCESSER_N_REPLICAS}
     environment:
       CONFIG_PATHS: ./tw-api-processer/configuration.yaml
-    stdin_open: true
-    tty: true
 
   ksqldb-server:
     image: confluentinc/ksqldb-server:0.28.2
@@ -124,12 +111,7 @@ services:
       - "8088:8088"
     networks: 
       - kafka_network
-    environment:
-      KSQL_LISTENERS: http://0.0.0.0:8088
-      KSQL_BOOTSTRAP_SERVERS: http://broker:29092
-      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
-      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
-      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    env_file: server.env
 
   ksqldb-cli:
     image: confluentinc/ksqldb-cli:0.28.2
@@ -141,31 +123,6 @@ services:
       - kafka_network
     entrypoint: /bin/sh
     tty: true
-
-  # control-center:
-  #   image: confluentinc/cp-enterprise-control-center:7.2.2
-  #   hostname: control-center
-  #   container_name: control-center
-  #   depends_on:
-  #     - broker
-  #     - ksqldb-server
-  #     - schema-registry
-  #     - kafka-connect
-  #   ports:
-  #     - "9021:9021"
-  #   networks: 
-  #     - kafka_network
-  #   environment:
-  #     CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
-  #     CONTROL_CENTER_CONNECT_STREAMING_CLUSTER: 'kafka-connect:8083'
-  #     CONTROL_CENTER_KSQL_KSQLDB1_URL: "ksqldb-server:8088"
-  #     CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "localhost:8088"
-  #     CONTROL_CENTER_SCHEMA_REGISTRY_URL: "schema-registry:8081"
-  #     CONTROL_CENTER_REPLICATION_FACTOR: 1
-  #     CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
-  #     CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
-  #     CONFLUENT_METRICS_TOPIC_REPLICATION: 1
-  #     PORT: 9021
 
   kafka-ui:
     container_name: kafka-ui

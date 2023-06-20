@@ -1,5 +1,3 @@
-general:
-  log_level: DEBUG
 topics:
   input_topic: stream-tweets-api
   output_topic: stream-tweets

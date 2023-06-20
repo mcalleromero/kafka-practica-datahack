@@ -1,6 +1,6 @@
 kafka:
   clusters:
-    - name: practica
+    - name: pissed-off-people-on-twitter
       bootstrapServers: http://broker:29092
       kafkaConnect: 
         clusters:

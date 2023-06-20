@@ -12,10 +12,14 @@ while : ; do
   sleep 5 
 done
 
-echo -e "\n--\n+> Creating CSV Spool Dir source"
-curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+if $CONNECT_FILES_ENABLE ; then
+  echo -e "\n--\n+> Creating CSV Spool Dir source"
+  curl -d @"input-spooldir.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+fi
 
-echo -e "\n--\n+> Creating REST source"
-curl -d @"input-rest.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+if $TWITTER_API_ENABLE ; then
+  echo -e "\n--\n+> Creating REST source"
+  curl -d @"input-rest.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+fi
 
 sleep infinity
