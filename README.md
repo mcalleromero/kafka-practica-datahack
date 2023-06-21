@@ -2,9 +2,22 @@
 
 Based on: https://huggingface.co/blog/sentiment-analysis-python
 
+# Documentación
+- [Diseño](./doc/design.md)
+- [Manual de operación](./doc/operacion.md)
+- [Manual de usuario](./doc/manual_uso.md)
+
 # Architecture (c4 model diagram - System context)
 
-![arch-diagram](./doc/img/arch-diagram.system_context.v2.drawio.png "arch-diagram")
+Primer nivel de diagrama de arquitectura modelo c4 - System context, en el que se detalla el contexto del sistema con elementos externos y la interrelación de los módulos internos en alto nivel.
+
+![arch-diagram](./doc/img/arch-diagram.system_context.drawio.png "arch-diagram")
+
+# Architecture (c4 model diagram - Containers)
+
+Diagrama de arquitectura modelo c4 - Level 2 - Containers, con mayor nivel de detalle. En este diagrama, además del contexto del sistema, se detallan todos los módulos que intervienen y conforman la aplicación.
+
+![arch-diagram-containers](./doc/img/arch-diagram.containers.drawio.png "arch-diagram-containers")
 
 # REST connector
 
