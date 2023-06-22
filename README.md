@@ -24,3 +24,7 @@ Primer nivel de diagrama de arquitectura modelo c4 - System context, en el que s
 Diagrama de arquitectura modelo c4 - Level 2 - Containers, con mayor nivel de detalle. En este diagrama, además del contexto del sistema, se detallan todos los módulos que intervienen y conforman la aplicación.
 
 ![arch-diagram-containers](./doc/img/arch-diagram.containers.drawio.png "arch-diagram-containers")
+
+# Referencias
+
+Todo el proyecto ha sido desarrollado haciendo uso del conjunto de datos [sentiment140](https://www.kaggle.com/datasets/kazanova/sentiment140), con 1.6 millones de tweets. 
