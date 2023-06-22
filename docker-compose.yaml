@@ -30,9 +30,9 @@ services:
     hostname: kafka-connect
     container_name: kafka-connect
     volumes:
-      - ${PWD}/data/input:/data/input
-      - ${PWD}/data/error:/data/error
-      - ${PWD}/data/processed:/data/processed
+      - ${FILES_INPUT_PATH}:/data/input
+      - ${FILES_ERROR_PATH}:/data/error
+      - ${FILES_PROCESSED_PATH}:/data/processed
     depends_on:
       - broker
     networks:
@@ -82,16 +82,15 @@ services:
     networks: 
       - kafka_network
     volumes:
-      - ${PWD}/data/api:/data
+      - ${API_TWEETS_DIRECTORY}:/data
     ports:
       - "8099:8099"
     environment:
-      TWEETS_FILE_PATH: /data/tweets_processed.csv
+      TWEETS_FILE_PATH: ${TWEETS_FILE_PATH:-tweets_processed.csv}
 
   twitter-api-processer:
     image: twitter-api-processer:${VERSION}
     hostname: twitter-api-processer
-    # container_name: twitter-api-processer
     build:
       context: ./src
       dockerfile: ./tw-api-processer/Dockerfile
@@ -134,6 +133,9 @@ services:
       - "9300:9300"
     networks: 
       - kafka_network
+    deploy:
+      mode: replicated
+      replicas: ${ELK_N_REPLICAS}
     volumes:
       - elastic-data:/usr/share/elasticsearch/data
     environment:
@@ -149,6 +151,9 @@ services:
       - "5601:5601"
     networks: 
       - kafka_network
+    deploy:
+      mode: replicated
+      replicas: ${ELK_N_REPLICAS}
     environment:
       ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
 
@@ -162,7 +167,7 @@ services:
     environment:
       DYNAMIC_CONFIG_ENABLED: true
     volumes:
-      - ${PWD}/kafka-ui-config.yaml:/etc/kafkaui/dynamic_config.yaml
+      - ${KAFKA_UI_CONFIG_PATH}:/etc/kafkaui/dynamic_config.yaml
 
 networks:
   kafka_network:

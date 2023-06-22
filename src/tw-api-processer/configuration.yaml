@@ -16,17 +16,17 @@ schemas:
         {
           "name": "user",
           "type":"string",
-          "isOptional": false
+          "isOptional": true
         },
         {
           "name": "date",
           "type":"string",
-          "isOptional": false
+          "isOptional": true
         },
         {
           "name": "tweet",
           "type":"string",
-          "isOptional": false
+          "isOptional": true
         }
       ]
     }

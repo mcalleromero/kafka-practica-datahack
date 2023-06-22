@@ -43,6 +43,14 @@ class Tweet:
         except KeyError:
             raise TweetError("Tweet date creation not found")
 
+    def _try_isoformat_date(self, date: str) -> datetime:
+        try:
+            formatted_date = datetime.fromisoformat(date).astimezone(pytz.utc)
+        except ValueError:
+            TweetError(f"Datetime is not correctly formatted: {date}. Try ISO format")
+
+        return formatted_date
+
     def _format_date(self, date: str) -> datetime:
         try:
             formatted_date = (
@@ -52,6 +60,8 @@ class Tweet:
             )
         except pytz.exceptions.UnknownTimeZoneError:
             TweetError(f"Incorrect timezone: {config.default_timezone}")
+        except Exception:
+            formatted_date = self._try_isoformat_date(date)
 
         return formatted_date
 
@@ -61,6 +71,7 @@ class Tweet:
             "content": self.content,
             "date": self.date.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "sentiment": self.sentiment,
+            "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
 
 
